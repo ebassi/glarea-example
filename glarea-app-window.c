@@ -13,7 +13,6 @@ struct _GlareaAppWindow
   GtkAdjustment *z_adjustment;
 
   GtkWidget *gl_drawing_area;
-  GtkWidget *quit_button;
 
   double rotation_angles[N_AXES];
   float mvp[16];
@@ -343,7 +342,6 @@ glarea_app_window_class_init (GlareaAppWindowClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/io/bassi/glarea/glarea-app-window.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GlareaAppWindow, gl_drawing_area);
-  gtk_widget_class_bind_template_child (widget_class, GlareaAppWindow, quit_button);
   gtk_widget_class_bind_template_child (widget_class, GlareaAppWindow, x_adjustment);
   gtk_widget_class_bind_template_child (widget_class, GlareaAppWindow, y_adjustment);
   gtk_widget_class_bind_template_child (widget_class, GlareaAppWindow, z_adjustment);
