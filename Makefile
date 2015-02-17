@@ -1,4 +1,4 @@
-CC ?= gcc
+CC ?= gcc -std=c99
 PKGCONFIG = $(shell which pkg-config)
 CFLAGS = $(shell $(PKGCONFIG) --cflags gtk+-3.0 epoxy)
 LIBS = $(shell $(PKGCONFIG) --libs gtk+-3.0 epoxy) -lm 
