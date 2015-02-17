@@ -143,7 +143,7 @@ init_shaders (guint *program_out,
       int log_len = 0;
       glGetProgramiv (program, GL_INFO_LOG_LENGTH, &log_len);
 
-      char * buffer = g_malloc (log_len + 1);
+      char *buffer = g_malloc (log_len + 1);
       glGetProgramInfoLog (program, log_len, NULL, buffer);
 
       g_warning ("Linking failure:\n%s\n", buffer);
