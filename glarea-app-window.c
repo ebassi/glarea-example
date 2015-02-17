@@ -18,7 +18,6 @@ struct _GlareaAppWindow
   float mvp[16];
 
   guint vao;
-  guint vertex_buffer;
   guint program;
   guint mvp_location;
   guint position_index;
@@ -33,23 +32,21 @@ struct _GlareaAppWindowClass
 G_DEFINE_TYPE (GlareaAppWindow, glarea_app_window, GTK_TYPE_APPLICATION_WINDOW)
 
 /* the vertex data is constant */
-static const float vertex_data[] = {
-  /* vertices */
-   0.f,   0.5f,   0.f,
-   0.5f, -0.366f, 0.f,
-  -0.5f, -0.366f, 0.f,
+struct vertex_info {
+  float position[3];
+  float color[3];
+};
 
-  /* colors */
-  1.f, 0.f, 0.f,
-  0.f, 1.f, 0.f,
-  0.f, 0.f, 1.f,
+static const struct vertex_info vertex_data[] = {
+  { {  0.0f,  0.500f, 0.0f }, { 1.f, 0.f, 0.f } },
+  { {  0.5f, -0.366f, 0.0f }, { 0.f, 1.f, 0.f } },
+  { { -0.5f, -0.366f, 0.0f }, { 0.f, 0.f, 1.f } },
 };
 
 static void
 init_buffers (guint  position_index,
               guint  color_index,
-              guint *vao_out,
-              guint *vertex_buffer_out)
+              guint *vao_out)
 {
   guint vao, buffer;
 
@@ -57,30 +54,32 @@ init_buffers (guint  position_index,
   glGenVertexArrays (1, &vao);
   glBindVertexArray (vao);
 
-  /* this is the buffer that holds the vertices */
+  /* this is the VBO that holds the vertex data */
   glGenBuffers (1, &buffer);
   glBindBuffer (GL_ARRAY_BUFFER, buffer);
   glBufferData (GL_ARRAY_BUFFER, sizeof (vertex_data), vertex_data, GL_STATIC_DRAW);
 
-  /* enable the attributes we use in the program */
+  /* enable and set the position attribute */
   glEnableVertexAttribArray (position_index);
+  glVertexAttribPointer (position_index, 3, GL_FLOAT, GL_FALSE,
+                         sizeof (struct vertex_info),
+                         (GLvoid *) (G_STRUCT_OFFSET (struct vertex_info, position)));
+
+  /* enable and set the color attribute */
   glEnableVertexAttribArray (color_index);
+  glVertexAttribPointer (color_index, 3, GL_FLOAT, GL_FALSE,
+                         sizeof (struct vertex_info),
+                         (GLvoid *) (G_STRUCT_OFFSET (struct vertex_info, color)));
 
-  /* set the position attribute */
-  glVertexAttribPointer (position_index, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-  /* set the color attribute */
-  glVertexAttribPointer (color_index, 3, GL_FLOAT, GL_FALSE, 0, (char *) 0 + (sizeof (float) * 3 * 3));
-
-  /* reset the state */
+  /* reset the state; we will re-enable the VAO when needed */
   glBindBuffer (GL_ARRAY_BUFFER, 0);
   glBindVertexArray (0);
 
+  /* the VBO is referenced by the VAO */
+  glDeleteBuffers (1, &buffer);
+
   if (vao_out != NULL)
     *vao_out = vao;
-
-  if (vertex_buffer_out != NULL)
-    *vertex_buffer_out = buffer;
 }
 
 static guint
@@ -224,9 +223,7 @@ gl_init (GlareaAppWindow *self)
     }
 
   /* initialize the vertex buffers */
-  init_buffers (self->position_index, self->color_index,
-                &self->vao,
-                &self->vertex_buffer);
+  init_buffers (self->position_index, self->color_index, &self->vao);
 }
 
 static void
@@ -236,7 +233,6 @@ gl_fini (GlareaAppWindow *self)
   gtk_gl_area_make_current (GTK_GL_AREA (self->gl_drawing_area));
 
   /* destroy all the resources we created */
-  glDeleteBuffers (1, &self->vertex_buffer);
   glDeleteVertexArrays (1, &self->vao);
   glDeleteProgram (self->program);
 }
@@ -255,10 +251,6 @@ draw_triangle (GlareaAppWindow *self)
 
   /* use the buffers in the VAO */
   glBindVertexArray (self->vao);
-
-  /* enable the attributes we use in the program */
-  glEnableVertexAttribArray (self->position_index);
-  glEnableVertexAttribArray (self->color_index);
 
   /* draw the three vertices as a triangle */
   glDrawArrays (GL_TRIANGLES, 0, 3);
