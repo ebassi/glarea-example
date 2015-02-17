@@ -264,8 +264,6 @@ draw_triangle (GlareaAppWindow *self)
   glDrawArrays (GL_TRIANGLES, 0, 3);
 
   /* we finished using the buffers and program */
-  glDisableVertexAttribArray (0);
-  glBindBuffer (GL_ARRAY_BUFFER, 0);
   glBindVertexArray (0);
   glUseProgram (0);
 }
