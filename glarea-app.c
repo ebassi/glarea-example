@@ -13,6 +13,8 @@ struct _GlareaAppClass
   GtkApplicationClass parent_class;
 };
 
+G_DEFINE_QUARK (glarea-error, glarea_error)
+
 G_DEFINE_TYPE (GlareaApp, glarea_app, GTK_TYPE_APPLICATION)
 
 static void
