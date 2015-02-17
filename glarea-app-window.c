@@ -152,7 +152,6 @@ init_shaders (guint *program_out,
 
       glDeleteProgram (program);
       program = 0;
-      mvp_location = 0;
 
       goto out;
     }
@@ -203,6 +202,7 @@ gl_init (GlareaAppWindow *self)
 static void
 gl_fini (GlareaAppWindow *self)
 {
+  /* we need to ensure that the GdkGLContext is set before calling GL API */
   gtk_gl_area_make_current (GTK_GL_AREA (self->gl_drawing_area));
 
   /* destroy all the resources we created */
@@ -224,6 +224,7 @@ draw_triangle (GlareaAppWindow *self)
   glBindVertexArray (self->vao);
   glBindBuffer (GL_ARRAY_BUFFER, self->vertex_buffer);
 
+  /* enable the attributes we use in the program */
   glEnableVertexAttribArray (self->position_index);
   glEnableVertexAttribArray (self->color_index);
 
@@ -296,7 +297,7 @@ compute_mvp (float *res,
   float c2s1 = c2 * s1;
   float c2c1 = c2 * c1;
   
-  /* apply all three rotations using the three matrices:
+  /* apply all three Euler angles rotations using the three matrices:
    *
    * ⎡  c3 s3 0 ⎤ ⎡ c2  0 -s2 ⎤ ⎡ 1   0  0 ⎤
    * ⎢ -s3 c3 0 ⎥ ⎢  0  1   0 ⎥ ⎢ 0  c1 s1 ⎥
