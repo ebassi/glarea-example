@@ -1,0 +1,3 @@
+*.o
+/glarea
+/glarea-resources.c
