@@ -72,8 +72,10 @@ init_buffers (guint *vao_out,
 }
 
 static guint
-create_shader (int         shader_type,
-               const char *source)
+create_shader (int          shader_type,
+               const char  *source,
+               GError     **error,
+               guint       *shader_out)
 {
   guint shader = glCreateShader (shader_type);
   glShaderSource (shader, 1, &source, NULL);
@@ -89,25 +91,29 @@ create_shader (int         shader_type,
       char *buffer = g_malloc (log_len + 1);
       glGetShaderInfoLog (shader, log_len, NULL, buffer);
 
-      g_warning ("Compilation failure in %s shader:\n%s\n",
-                 shader_type == GL_VERTEX_SHADER ? "vertex" : "fragment",
-                 buffer);
+      g_set_error (error, GLAREA_ERROR, GLAREA_ERROR_SHADER_COMPILATION,
+                   "Compilation failure in %s shader: %s",
+                   shader_type == GL_VERTEX_SHADER ? "vertex" : "fragment",
+                   buffer);
 
       g_free (buffer);
 
       glDeleteShader (shader);
-
-      return 0;
+      shader = 0;
     }
 
-  return shader;
+  if (shader_out != NULL)
+    *shader_out = shader;
+
+  return shader != 0;
 }
 
-static void
-init_shaders (guint *program_out,
-              guint *mvp_location_out,
-              guint *position_location_out,
-              guint *color_location_out)
+static gboolean
+init_shaders (guint   *program_out,
+              guint   *mvp_location_out,
+              guint   *position_location_out,
+              guint   *color_location_out,
+              GError **error)
 {
   GBytes *source;
   guint program = 0;
@@ -118,14 +124,14 @@ init_shaders (guint *program_out,
 
   /* load the vertex shader */
   source = g_resources_lookup_data ("/io/bassi/glarea/glarea-vertex.glsl", 0, NULL);
-  vertex = create_shader (GL_VERTEX_SHADER, g_bytes_get_data (source, NULL));
+  create_shader (GL_VERTEX_SHADER, g_bytes_get_data (source, NULL), error, &vertex);
   g_bytes_unref (source);
   if (vertex == 0)
     goto out;
 
   /* load the fragment shader */
   source = g_resources_lookup_data ("/io/bassi/glarea/glarea-fragment.glsl", 0, NULL);
-  fragment = create_shader (GL_FRAGMENT_SHADER, g_bytes_get_data (source, NULL));
+  create_shader (GL_FRAGMENT_SHADER, g_bytes_get_data (source, NULL), error, &fragment);
   g_bytes_unref (source);
   if (fragment == 0)
     goto out;
@@ -146,7 +152,8 @@ init_shaders (guint *program_out,
       char *buffer = g_malloc (log_len + 1);
       glGetProgramInfoLog (program, log_len, NULL, buffer);
 
-      g_warning ("Linking failure:\n%s\n", buffer);
+      g_set_error (error, GLAREA_ERROR, GLAREA_ERROR_SHADER_LINK,
+                   "Linking failure in program: %s", buffer);
 
       g_free (buffer);
 
@@ -181,6 +188,8 @@ out:
     *position_location_out = position_location;
   if (color_location_out != NULL)
     *color_location_out = color_location;
+
+  return program != 0;
 }
 
 static void
@@ -193,10 +202,16 @@ gl_init (GlareaAppWindow *self)
   init_buffers (&self->vao, &self->vertex_buffer);
 
   /* initialize the shaders and retrieve the program data */
-  init_shaders (&self->program,
-                &self->mvp_location,
-                &self->position_index,
-                &self->color_index);
+  GError *error = NULL;
+  if (!init_shaders (&self->program,
+                     &self->mvp_location,
+                     &self->position_index,
+                     &self->color_index,
+                     &error))
+    {
+      gtk_gl_area_set_error (GTK_GL_AREA (self->gl_drawing_area), error);
+      g_error_free (error);
+    }
 }
 
 static void
