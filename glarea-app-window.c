@@ -214,6 +214,9 @@ gl_fini (GlareaAppWindow *self)
 static void
 draw_triangle (GlareaAppWindow *self)
 {
+  if (self->program == 0)
+    return;
+
   /* load our program */
   glUseProgram (self->program);
 
