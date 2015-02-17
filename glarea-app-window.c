@@ -46,7 +46,9 @@ static const float vertex_data[] = {
 };
 
 static void
-init_buffers (guint *vao_out,
+init_buffers (guint  position_index,
+              guint  color_index,
+              guint *vao_out,
               guint *vertex_buffer_out)
 {
   guint vao, buffer;
@@ -59,6 +61,16 @@ init_buffers (guint *vao_out,
   glGenBuffers (1, &buffer);
   glBindBuffer (GL_ARRAY_BUFFER, buffer);
   glBufferData (GL_ARRAY_BUFFER, sizeof (vertex_data), vertex_data, GL_STATIC_DRAW);
+
+  /* enable the attributes we use in the program */
+  glEnableVertexAttribArray (position_index);
+  glEnableVertexAttribArray (color_index);
+
+  /* set the position attribute */
+  glVertexAttribPointer (position_index, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+  /* set the color attribute */
+  glVertexAttribPointer (color_index, 3, GL_FLOAT, GL_FALSE, 0, (char *) 0 + (sizeof (float) * 3 * 3));
 
   /* reset the state */
   glBindBuffer (GL_ARRAY_BUFFER, 0);
@@ -198,9 +210,6 @@ gl_init (GlareaAppWindow *self)
   /* we need to ensure that the GdkGLContext is set before calling GL API */
   gtk_gl_area_make_current (GTK_GL_AREA (self->gl_drawing_area));
 
-  /* initialize the vertex buffers */
-  init_buffers (&self->vao, &self->vertex_buffer);
-
   /* initialize the shaders and retrieve the program data */
   GError *error = NULL;
   if (!init_shaders (&self->program,
@@ -211,7 +220,13 @@ gl_init (GlareaAppWindow *self)
     {
       gtk_gl_area_set_error (GTK_GL_AREA (self->gl_drawing_area), error);
       g_error_free (error);
+      return;
     }
+
+  /* initialize the vertex buffers */
+  init_buffers (self->position_index, self->color_index,
+                &self->vao,
+                &self->vertex_buffer);
 }
 
 static void
@@ -229,7 +244,7 @@ gl_fini (GlareaAppWindow *self)
 static void
 draw_triangle (GlareaAppWindow *self)
 {
-  if (self->program == 0)
+  if (self->program == 0 || self->vao == 0)
     return;
 
   /* load our program */
@@ -238,19 +253,12 @@ draw_triangle (GlareaAppWindow *self)
   /* update the "mvp" matrix we use in the shader */
   glUniformMatrix4fv (self->mvp_location, 1, GL_FALSE, &(self->mvp[0]));
 
-  /* use the vertices in our buffer */
+  /* use the buffers in the VAO */
   glBindVertexArray (self->vao);
-  glBindBuffer (GL_ARRAY_BUFFER, self->vertex_buffer);
 
   /* enable the attributes we use in the program */
   glEnableVertexAttribArray (self->position_index);
   glEnableVertexAttribArray (self->color_index);
-
-  /* set the position attribute */
-  glVertexAttribPointer (self->position_index, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-  /* set the color attribute */
-  glVertexAttribPointer (self->color_index, 3, GL_FLOAT, GL_FALSE, 0, (char *) 0 + (sizeof (float) * 3 * 3));
 
   /* draw the three vertices as a triangle */
   glDrawArrays (GL_TRIANGLES, 0, 3);
