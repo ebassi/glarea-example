@@ -5,7 +5,7 @@ LIBS = $(shell $(PKGCONFIG) --libs gtk+-3.0 epoxy) -lm
 GLIB_COMPILE_RESOURCES = $(shell $(PKGCONFIG) --variable=glib_compile_resources gio-2.0)
 GLIB_COMPILE_SCHEMAS = $(shell $(PKGCONFIG) --variable=glib_compile_schemas gio-2.0)
 
-SRC = glarea-app.c glarea-app-window.c main.c
+SRC = glarea-app.c glarea-app-window.c glarea-error.c main.c
 GEN = glarea-resources.c
 BIN = glarea
 

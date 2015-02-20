@@ -1,4 +1,5 @@
 #include "glarea-app-window.h"
+#include "glarea-error.h"
 #include <epoxy/gl.h>
 #include <math.h>
 
