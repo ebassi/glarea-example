@@ -284,7 +284,7 @@ gl_draw (GlareaAppWindow *self)
 }
 
 static void
-init_identity (float *res)
+init_mvp (float *res)
 {
   /* initialize a matrix as an identity matrix */
   res[0] = 1.f; res[4] = 0.f;  res[8] = 0.f; res[12] = 0.f;
@@ -382,7 +382,7 @@ glarea_app_window_init (GlareaAppWindow *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 
   /* reset the mvp matrix */
-  init_identity (self->mvp);
+  init_mvp (self->mvp);
 }
 
 GtkWidget *
