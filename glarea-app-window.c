@@ -15,7 +15,10 @@ struct _GlareaAppWindow
 
   GtkWidget *gl_drawing_area;
 
+  /* decomposed rotations */
   double rotation_angles[N_AXES];
+
+  /* model-view-projection matrix */
   float mvp[16];
 
   guint vao;
@@ -32,12 +35,13 @@ struct _GlareaAppWindowClass
 
 G_DEFINE_TYPE (GlareaAppWindow, glarea_app_window, GTK_TYPE_APPLICATION_WINDOW)
 
-/* the vertex data is constant */
+/* position and color information for each vertex */
 struct vertex_info {
   float position[3];
   float color[3];
 };
 
+/* the vertex data is constant */
 static const struct vertex_info vertex_data[] = {
   { {  0.0f,  0.500f, 0.0f }, { 1.f, 0.f, 0.f } },
   { {  0.5f, -0.366f, 0.0f }, { 0.f, 1.f, 0.f } },
@@ -348,7 +352,9 @@ adjustment_changed (GlareaAppWindow *self,
                self->rotation_angles[Y_AXIS],
                self->rotation_angles[Z_AXIS]);
 
-  /* queue a redraw on the GtkGLArea */
+  /* queue a redraw on the GtkGLArea to ensure its contents
+   * get redrawn in the next frame
+   */
   gtk_widget_queue_draw (self->gl_drawing_area);
 }
 
