@@ -34,7 +34,7 @@ glarea-resources.c: glarea.gresource.xml $(shell $(GLIB_COMPILE_RESOURCES) --sou
 	$(V_CC)$(CC) $(CFLAGS) -c -o $(@F) $<
 
 $(BIN): $(OBJS)
-	$(V_LINK)$(CC) -o $(@F) $(LIBS) $(OBJS)
+	$(V_LINK)$(CC) -o $(@F) $(OBJS) $(LIBS)
 
 clean:
 	@rm -f $(GEN) $(OBJS) $(BIN)
