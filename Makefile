@@ -21,7 +21,7 @@ glarea-resources.c: glarea.gresource.xml $(shell $(GLIB_COMPILE_RESOURCES) --sou
 	$(CC) -c -o $(@F) $(CFLAGS) $<
 
 $(BIN): $(OBJS)
-	$(CC) -o $(@F) $(LIBS) $(OBJS)
+	$(CC) -o $(@F) $(OBJS) $(LIBS)
 
 clean:
 	rm -f $(GEN)
