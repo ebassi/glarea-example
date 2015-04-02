@@ -217,6 +217,10 @@ gl_init (GlareaAppWindow *self)
   /* we need to ensure that the GdkGLContext is set before calling GL API */
   gtk_gl_area_make_current (GTK_GL_AREA (self->gl_drawing_area));
 
+  /* if the GtkGLArea is in an error state we don't do anything */
+  if (gtk_gl_area_get_error (GTK_GL_AREA (self->gl_drawing_area)) != NULL)
+    return;
+
   /* initialize the shaders and retrieve the program data */
   GError *error = NULL;
   if (!init_shaders (&self->program,
@@ -243,9 +247,15 @@ gl_fini (GlareaAppWindow *self)
   /* we need to ensure that the GdkGLContext is set before calling GL API */
   gtk_gl_area_make_current (GTK_GL_AREA (self->gl_drawing_area));
 
+  /* skip everything if we're in error state */
+  if (gtk_gl_area_get_error (GTK_GL_AREA (self->gl_drawing_area)) != NULL)
+    return;
+
   /* destroy all the resources we created */
-  glDeleteVertexArrays (1, &self->vao);
-  glDeleteProgram (self->program);
+  if (self->vao != 0)
+    glDeleteVertexArrays (1, &self->vao);
+  if (self->program != 0)
+    glDeleteProgram (self->program);
 }
 
 static void
