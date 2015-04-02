@@ -9,10 +9,12 @@ struct _GlareaAppWindow
 {
   GtkApplicationWindow parent_instance;
 
+  /* the adjustments we use to control the rotation angles */
   GtkAdjustment *x_adjustment;
   GtkAdjustment *y_adjustment;
   GtkAdjustment *z_adjustment;
 
+  /* our GL rendering widget */
   GtkWidget *gl_drawing_area;
 
   /* decomposed rotations */
@@ -21,6 +23,7 @@ struct _GlareaAppWindow
   /* model-view-projection matrix */
   float mvp[16];
 
+  /* GL objects */
   guint vao;
   guint program;
   guint mvp_location;
@@ -222,6 +225,9 @@ gl_init (GlareaAppWindow *self)
                      &self->color_index,
                      &error))
     {
+      /* set the GtkGLArea in error state, so we'll see the error message
+       * rendered inside the viewport
+       */
       gtk_gl_area_set_error (GTK_GL_AREA (self->gl_drawing_area), error);
       g_error_free (error);
       return;
@@ -269,7 +275,7 @@ static gboolean
 gl_draw (GlareaAppWindow *self)
 {
   /* clear the viewport; the viewport is automatically resized when
-   * the GtkGLArea gets an allocation
+   * the GtkGLArea gets a new size allocation
    */
   glClearColor (0.5, 0.5, 0.5, 1.0);
   glClear (GL_COLOR_BUFFER_BIT);
