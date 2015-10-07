@@ -395,11 +395,11 @@ animate_rotation (GtkWidget *widget,
 
   double d = frame_time - self->first_frame_time;
   double f = (double) G_USEC_PER_SEC * 180.0;
-  double angle = fmod (d / f, 360.0);
+  double angle = d / f;
 
-  gtk_adjustment_set_value (self->x_adjustment, gtk_adjustment_get_value (self->x_adjustment) + angle);
-  gtk_adjustment_set_value (self->y_adjustment, gtk_adjustment_get_value (self->y_adjustment) + angle);
-  gtk_adjustment_set_value (self->z_adjustment, gtk_adjustment_get_value (self->z_adjustment) + angle);
+  gtk_adjustment_set_value (self->x_adjustment, fmod (gtk_adjustment_get_value (self->x_adjustment) + angle, 360.0));
+  gtk_adjustment_set_value (self->y_adjustment, fmod (gtk_adjustment_get_value (self->y_adjustment) + angle, 360.0));
+  gtk_adjustment_set_value (self->z_adjustment, fmod (gtk_adjustment_get_value (self->z_adjustment) + angle, 360.0));
 
   return G_SOURCE_CONTINUE;
 }
