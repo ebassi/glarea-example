@@ -17,6 +17,10 @@ struct _GlareaAppWindow
   /* our GL rendering widget */
   GtkWidget *gl_drawing_area;
 
+  GtkWidget *animate_button;
+  guint tick_id;
+  gint64 first_frame_time;
+
   /* decomposed rotations */
   double rotation_angles[N_AXES];
 
@@ -374,6 +378,54 @@ adjustment_changed (GlareaAppWindow *self,
   gtk_widget_queue_draw (self->gl_drawing_area);
 }
 
+static gboolean
+animate_rotation (GtkWidget *widget,
+                  GdkFrameClock *frame_clock,
+                  gpointer data)
+{
+  GlareaAppWindow *self = data;
+  gint64 frame_time = gdk_frame_clock_get_frame_time (frame_clock);
+
+  if (self->first_frame_time == 0)
+    {
+      self->first_frame_time = frame_time;
+
+      return G_SOURCE_CONTINUE;
+    }
+
+  double d = frame_time - self->first_frame_time;
+  double f = (double) G_USEC_PER_SEC * 180.0;
+  double angle = fmod (d / f, 360.0);
+
+  gtk_adjustment_set_value (self->x_adjustment, gtk_adjustment_get_value (self->x_adjustment) + angle);
+  gtk_adjustment_set_value (self->y_adjustment, gtk_adjustment_get_value (self->y_adjustment) + angle);
+  gtk_adjustment_set_value (self->z_adjustment, gtk_adjustment_get_value (self->z_adjustment) + angle);
+
+  return G_SOURCE_CONTINUE;
+}
+
+static void
+animate_toggled (GlareaAppWindow *self)
+{
+  gboolean toggled = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->animate_button));
+
+  if (toggled)
+    {
+      g_assert (self->tick_id == 0);
+
+      self->first_frame_time = 0;
+      self->tick_id =
+        gtk_widget_add_tick_callback (self->gl_drawing_area, animate_rotation, self, NULL);
+    }
+  else
+    {
+      g_assert (self->tick_id != 0);
+
+      gtk_widget_remove_tick_callback (self->gl_drawing_area, self->tick_id);
+      self->tick_id = 0;
+    }
+}
+
 static void
 glarea_app_window_class_init (GlareaAppWindowClass *klass)
 {
@@ -385,8 +437,10 @@ glarea_app_window_class_init (GlareaAppWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, GlareaAppWindow, x_adjustment);
   gtk_widget_class_bind_template_child (widget_class, GlareaAppWindow, y_adjustment);
   gtk_widget_class_bind_template_child (widget_class, GlareaAppWindow, z_adjustment);
+  gtk_widget_class_bind_template_child (widget_class, GlareaAppWindow, animate_button);
 
   gtk_widget_class_bind_template_callback (widget_class, adjustment_changed);
+  gtk_widget_class_bind_template_callback (widget_class, animate_toggled);
   gtk_widget_class_bind_template_callback (widget_class, gl_init);
   gtk_widget_class_bind_template_callback (widget_class, gl_draw);
   gtk_widget_class_bind_template_callback (widget_class, gl_fini);
