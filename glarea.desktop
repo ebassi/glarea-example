@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=glarea example
+Exec=glarea
+Terminal=false
+Type=Application
+StartupNotify=true
