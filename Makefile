@@ -1,3 +1,5 @@
+PREFIX = /usr
+
 V ?= 0
 V_GEN = $(V__gen_V_$(V))
 V__gen_V_0 = @echo " GEN    " $@;
@@ -35,6 +37,9 @@ glarea-resources.c: glarea.gresource.xml $(shell $(GLIB_COMPILE_RESOURCES) --sou
 
 $(BIN): $(OBJS)
 	$(V_LINK)$(CC) -o $(@F) $(OBJS) $(LIBS)
+
+install: $(BIN)
+	install -m0755 $(BIN) $(PREFIX)/bin
 
 clean:
 	@rm -f $(GEN) $(OBJS) $(BIN)
