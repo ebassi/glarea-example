@@ -218,6 +218,9 @@ out:
 static void
 gl_init (GlareaAppWindow *self)
 {
+  char *title;
+  const char *renderer;
+
   /* we need to ensure that the GdkGLContext is set before calling GL API */
   gtk_gl_area_make_current (GTK_GL_AREA (self->gl_drawing_area));
 
@@ -243,6 +246,12 @@ gl_init (GlareaAppWindow *self)
 
   /* initialize the vertex buffers */
   init_buffers (self->position_index, self->color_index, &self->vao);
+
+  /* set the window title */
+  renderer = (char *) glGetString (GL_RENDERER);
+  title = g_strdup_printf ("glarea on %s", renderer ? renderer : "Unknown");
+  gtk_window_set_title (GTK_WINDOW (self), title);
+  g_free (title);
 }
 
 static void
