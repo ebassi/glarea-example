@@ -42,6 +42,7 @@ install: $(BIN) glarea.desktop
 	install -m0755 $(BIN) $(PREFIX)/bin
 	install -d -m 0755 $(PREFIX)/share/applications/
 	install -D -m0644 glarea.desktop $(PREFIX)/share/applications/glarea.desktop
+	install -D -m0644 glarea.png $(PREFIX)/share/icons/glarea.png
 
 clean:
 	@rm -f $(GEN) $(OBJS) $(BIN)

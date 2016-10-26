@@ -462,6 +462,8 @@ glarea_app_window_init (GlareaAppWindow *self)
 
   /* reset the mvp matrix */
   init_mvp (self->mvp);
+
+  gtk_window_set_icon_name (GTK_WINDOW (self), "glarea");
 }
 
 GtkWidget *
