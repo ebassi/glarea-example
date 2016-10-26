@@ -1,0 +1,14 @@
+addons:
+  apt:
+    packages:
+    - libgtk-3-dev
+
+sudo: false
+
+language: c
+compiler:
+  - gcc
+  - clang
+
+script:
+  - make V=1 a
