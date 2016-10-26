@@ -11,4 +11,4 @@ compiler:
   - clang
 
 script:
-  - make V=1 a
+  - make V=1 all
