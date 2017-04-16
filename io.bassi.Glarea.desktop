@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=glarea example
 Exec=glarea
-Icon=glarea
+Icon=io.bassi.Glarea
 Terminal=false
 Type=Application
 StartupNotify=true
