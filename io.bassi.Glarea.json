@@ -1,0 +1,41 @@
+{
+    "app-id": "io.bassi.Glarea",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.24",
+    "sdk": "org.gnome.Sdk",
+    "command": "glarea",
+    "tags": [],
+    "finish-args": [
+        "--share=ipc", "--socket=x11",
+        "--socket=wayland",
+        "--share=network",
+        "--filesystem=xdg-run/dconf", "--filesystem=~/.config/dconf:ro",
+        "--talk-name=ca.desrt.dconf", "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
+    ],
+    "build-options" : {
+        "cflags": "-O2 -g",
+        "env": {
+            "V": 1
+        }
+    },
+    "cleanup": ["/include", "/lib/pkgconfig",
+                "/share/pkgconfig", "/share/aclocal",
+                "/man", "/share/man", "/share/gtk-doc",
+                "*.la", "*.a",
+                "/lib/girepository-1.0",
+                "/share/doc", "/share/gir-1.0"
+    ],
+    "modules": [
+        {
+            "name": "glarea",
+            "buildsystem": "simple",
+            "build-commands": [ "make", "make PREFIX=/app install" ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/ebassi/glarea-example"
+                }
+            ]
+        }
+    ]
+}
