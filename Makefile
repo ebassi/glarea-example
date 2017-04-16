@@ -38,7 +38,7 @@ glarea-resources.c: glarea.gresource.xml $(shell $(GLIB_COMPILE_RESOURCES) --sou
 $(BIN): $(OBJS)
 	$(V_LINK)$(CC) -o $(@F) $(OBJS) $(LIBS)
 
-install: $(BIN) glarea.desktop
+install: $(BIN) io.bassi.Glarea.desktop
 	install -d -m 0755 $(PREFIX)/bin
 	install -m0755 $(BIN) $(PREFIX)/bin/$(BIN)
 	install -d -m 0755 $(PREFIX)/share/applications/
