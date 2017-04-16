@@ -1,14 +1,19 @@
-addons:
-  apt:
-    packages:
-    - libgtk-3-dev
-
 sudo: false
 
 language: c
 compiler:
   - gcc
-  - clang
+
+services:
+  - docker
+
+before_install:
+  - docker pull ebassi/emeusci
+
+before_script:
+  - echo FROM ebassi/emeusci > Dockerfile
+  - echo ADD . /root >> Dockerfile
+  - docker build -t emeusci:withgit .
 
 script:
-  - make V=1 all
+  - docker run emeusci:withgit /bin/sh -c "cd /root && make V=1 CC=$CC all"
