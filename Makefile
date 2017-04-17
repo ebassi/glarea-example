@@ -46,7 +46,7 @@ install: $(BIN) io.bassi.Glarea.desktop io.bassi.Glarea.appdata.xml
 	install -d -m 0755 $(PREFIX)/share/icons
 	install -D -m0644 io.bassi.Glarea.png $(PREFIX)/share/icons/io.bassi.Glarea.png
 	install -d -m 0755 $(PREFIX)/share/appdata
-	install -d -m0644 io.bassi.Glarea.appdata.xml $(PREFIX)/share/appdata/io.bassi.Glarea.appdata.xml
+	install -D -m0644 io.bassi.Glarea.appdata.xml $(PREFIX)/share/appdata/io.bassi.Glarea.appdata.xml
 
 clean:
 	@rm -f $(GEN) $(OBJS) $(BIN)
