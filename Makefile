@@ -1,4 +1,4 @@
-PREFIX = /usr
+PREFIX = /usr/local
 
 V ?= 0
 V_GEN = $(V__gen_V_$(V))
