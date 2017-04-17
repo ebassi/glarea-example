@@ -43,8 +43,9 @@ install: $(BIN) io.bassi.Glarea.desktop io.bassi.Glarea.appdata.xml
 	install -m0755 $(BIN) $(PREFIX)/bin/$(BIN)
 	install -d -m 0755 $(PREFIX)/share/applications
 	install -D -m0644 io.bassi.Glarea.desktop $(PREFIX)/share/applications/io.bassi.Glarea.desktop
-	install -d -m 0755 $(PREFIX)/share/icons
-	install -D -m0644 io.bassi.Glarea.png $(PREFIX)/share/icons/io.bassi.Glarea.png
+	install -d -m 0755 $(PREFIX)/share/icons/hicolor/512x512/apps
+	install -D -m0644 io.bassi.Glarea.png $(PREFIX)/share/icons/hicolor/512x512/apps/io.bassi.Glarea.png
+	gtk-update-icon-cache -q -t -f $(PREFIX)/share/icons/hicolor
 	install -d -m 0755 $(PREFIX)/share/appdata
 	install -D -m0644 io.bassi.Glarea.appdata.xml $(PREFIX)/share/appdata/io.bassi.Glarea.appdata.xml
 
