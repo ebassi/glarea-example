@@ -5,6 +5,20 @@ since GTK+ 3.16.
 
 See also: https://www.bassi.io/articles/2015/02/17/using-opengl-with-gtk/ 
 
+## Installation
+
+A binary build of this example is available as a [Flatpak](http://flatpak.org).
+Make sure you have Flatpak installed on your system, and then use:
+
+    $ flatpak install --from http://ebassi.github.io/glarea-example/glarea-example.flatpakref
+
+To install the binary build. A launcher should appear in the list of your
+applications; if it doesn't, you can use:
+
+    $ flatpak run io.bassi.Glarea
+
+To run the example.
+
 ## Building and running
 
 You will need GTK+ 3.16 or later to build this example.
