@@ -6,6 +6,7 @@
     "command": "glarea",
     "tags": [],
     "finish-args": [
+        "--device=dri",
         "--share=ipc", "--socket=x11",
         "--socket=wayland",
         "--share=network",
