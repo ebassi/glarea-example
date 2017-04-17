@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>io.bassi.Glarea.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>CC0-1.0</project_license>
+  <name>Glarea Example</name>
+  <summary>Example application usin GtkGLArea and OpenGL</summary>
+  <description>
+    <p>
+      Glarea is an example application that uses GTK+'s integration with OpenGL. It
+      is meant to be used as a teaching aid to understand how to use OpenGL inside a
+      GTK+ application.
+    </p>
+  </description>
+  <url type="homepage">http://ebassi.github.io/glarea-example</url>
+  <url type="bugtracker">https://github.com/ebassi/glarea-example/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://github.com/ebassi/glarea-example/raw/master/io.bassi.Glarea.png</image>
+    </screenshot>
+  </screenshots>
+  <update_contact>ebassi@gmail.com</update_contact>
+  <kudos>
+    <kudo>ModernToolkit</kudo>
+  </kudos>
+</component>
+
