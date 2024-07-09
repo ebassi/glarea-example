@@ -5,6 +5,11 @@ since GTK+ 3.16.
 
 See also: https://www.bassi.io/articles/2015/02/17/using-opengl-with-gtk/ 
 
+**NOTE**: This example is meant to be used with GTK+ 3.x only. GTK 4 has
+a [similar API](https://docs.gtk.org/gtk4/class.GLArea.html), and it
+allows more flexibility when it comes to selecting the version of GL to
+use, as well as supporting OpenGL and OpenGLES.
+
 ## Installation
 
 A binary build of this example is available as a [Flatpak](http://flatpak.org).
